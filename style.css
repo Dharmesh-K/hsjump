@@ -1,2 +1,16 @@
-body { margin: 0; overflow: hidden; background: #000; }
-canvas { width: 100vw; height: 100vh; display: block; }
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    overflow: hidden; /* Prevents scrolling */
+    background-color: #000; /* Dark background while shader loads */
+}
+
+.webgl {
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+}

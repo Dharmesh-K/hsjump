@@ -1,4 +1,4 @@
-import * as THREE from '/-/three@v0.150.0-OzKE9j8uVtfQ1iuz7xon/dist=es2019,mode=imports/optimized/three.js';
+import * as THREE from 'https://cdn.skypack.dev/three@0.150.0';
 
 const canvas = document.querySelector("canvas.webgl");
 const renderer = new THREE.WebGLRenderer({ canvas });
@@ -14,8 +14,8 @@ const fragmentShader = `
         vec3 b = vec3(0.5, 0.5, 0.5);
         vec3 c = vec3(1.0, 1.0, 1.0);
         vec3 d = vec3(0.3, 0.2, 0.2);
-
-        return a + b*cos(3.1415926*(c*t+d));
+        // Using 6.28318 (2*PI) gives a full color rotation
+        return a + b*cos(6.28318*(c*t+d));
     }
 
     void main() {
@@ -23,11 +23,12 @@ const fragmentShader = `
         vec2 uv0 = uv;
         vec3 finalColor = vec3(0.0);
 
-        for(i = 0.0; i < 6.0; i++) {
+        // FIX: Added 'float' type declaration for i
+        for(float i = 0.0; i < 6.0; i++) {
             uv = fract(uv * 1.5) - 0.5;
             float d = length(uv) * exp(-length(uv0));
             vec3 col = palette(length(uv0) + i*0.4 + iTime*0.4);
-            d = sin(d*0.8 + iTime)/8.0;
+            d = sin(d*8.0 + iTime)/8.0; // Restored to 8.0 for better contrast
             d = abs(d);
             d = pow(0.01 / d, 1.2);
             finalColor += col * d;
@@ -50,11 +51,14 @@ scene.add(mesh);
 function render(time) {
     time *= 0.001;
     material.uniforms.iTime.value = time;
-    material.uniforms.iResolution.value.set(window.innerWidth, window.innerHeight);
-    renderer.setSize((window.innerWidth, window.innerHeight));
+    
+    // Update resolution and size
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    material.uniforms.iResolution.value.set(width, height);
+    renderer.setSize(width, height);
+    
     renderer.render(scene, camera);
     requestAnimationFrame(render);
 }
 requestAnimationFrame(render);
-
-
