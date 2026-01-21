@@ -1,16 +1,25 @@
-* {
+html, body {
     margin: 0;
     padding: 0;
+    overflow: hidden;
+    background-color: #111;
+    font-family: sans-serif;
 }
 
-html, body {
-    overflow: hidden; /* Prevents scrolling */
-    background-color: #000; /* Dark background while shader loads */
-}
-
-.webgl {
-    position: fixed;
+canvas {
+    display: block;
     top: 0;
     left: 0;
     outline: none;
+}
+
+#loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    pointer-events: none;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
 }
