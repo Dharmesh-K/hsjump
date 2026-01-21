@@ -16,7 +16,14 @@ const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 
-const controls = new OrbitControls(camera, renderer.domElement); //??? Need to learn!git 
+const controls = new OrbitControls(camera, renderer.domElement); //??? Need to learn!
+
+controls.target.set(0, 10, 0);
+controls.screenSpacePanning = false;
+controls.minDistance = 20;
+controls.maxDistance = 250;
+controls.zoomSpeed = 0.5;
+controls.update();
 
 /* ------ 2. Lighting Setup ------ */
 // Why? Because displacement needs lighting to cast shadows on itself to be visible
