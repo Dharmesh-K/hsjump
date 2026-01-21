@@ -1,6 +1,6 @@
 import * as THREE from "three";
 //import * as THREE from 'https://cdn.skypack.dev/three@0.150.0';
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { EXRLoader } from "three/addons/loaders/EXRLoader.js";
 
 /* ------ 1. Boilerplate Three.js Setup ------ */
@@ -36,15 +36,17 @@ exrLoader.load(
     function(texture) {
         console.log("Heightmap Loaded!", texture);
 
+        const loaderElement = document.getElementById("loader");
+        if(loaderElement) loaderElement.style.display = "none";
+
         const geometry = new THREE.PlaneGeometry(100, 100, 1024, 1024);
         const material = new THREE.MeshStandardMaterial({
             color: 0x888888,
             displacementMap: texture,
             displacementScale: 25,
-            wireframe: true
+            wireframe: true,
+            side: THREE.DoubleSide
         });
-
-        material.side = THREE.DoubleSide;
 
         const mesh = new THREE.Mesh(geometry, material);
         mesh.rotation.x = -Math.PI / 2;
@@ -72,6 +74,6 @@ animate();
 /* ------ 5. Window Resizing Update ------ */
 window.addEventListener("resize", function() {
     camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix;
+    camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
