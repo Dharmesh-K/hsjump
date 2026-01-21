@@ -18,6 +18,14 @@ renderer.setPixelRatio(window.devicePixelRatio);
 
 const controls = new OrbitControls(camera, renderer.domElement); //??? Need to learn!
 
+controls.target.set(0, 0, 0);
+controls.update();
+
+controls.minDistance = 15;
+controls.maxDistance = 250;
+
+controls.zoomSpeed = 0.6;
+
 /* ------ 2. Lighting Setup ------ */
 // Why? Because displacement needs lighting to cast shadows on itself to be visible
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); //??? Need to learn!
