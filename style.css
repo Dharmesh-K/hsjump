@@ -11,6 +11,9 @@ canvas {
     top: 0;
     left: 0;
     outline: none;
+
+    touch-action: none; /* Disables browser zooming/panning gestures */
+    overscroll-behavior: none;     /* Prevents the "rubber band" bounce effect */
 }
 
 #loader {
