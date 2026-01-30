@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import vertexShader from "./Shaders/vertex.glsl";
-import fragmentShader from "./Shaders/fragment.glsl";
+import vertexShader from "/Shaders/vertex.glsl";
+import fragmentShader from "/Shaders/fragment.glsl";
 
 // Pre-requisities
 const canvas = document.querySelector("canvas.webgl");
