@@ -38,8 +38,8 @@ void main() {
     //vec2 uv = gl_FragCoord.xy / iResolution.xy;
     //uv = uv * 2.0 - 1.0;
 
-    float aspect = iResolution.x / iResolution.y;
-    uv.x *= aspect; 
+    //float aspect = iResolution.x / iResolution.y;
+    //uv.x *= aspect; 
 
     float cycle = 60.0;
     float tTime = mod(iTime, cycle);
