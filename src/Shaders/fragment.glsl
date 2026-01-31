@@ -47,7 +47,7 @@ void main() {
     
     // Camera
     vec3 ro = vec3(0.3, 0.0, -6.0);
-    vec3 rd = normalize(vec3(uv, 8.0)); // Focal length adjustor
+    vec3 rd = normalize(vec3(uv, 2.5)); // Focal length adjustor
 
     // Logic
     float t = 0.0;
