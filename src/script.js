@@ -51,15 +51,22 @@ function resize() {
     
     // A. Update Renderer
     renderer.setSize(width , height);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.getDrawingBufferSize(material.uniforms.iResolution.value);
 
     // B. Update Camera
     const aspect = width / height;
-    camera.left = -aspect;
-    camera.right = aspect;
-    camera.top = 1;
-    camera.bottom = -1;
+    if(aspect > 1) {
+        camera.left = -aspect;
+        camera.right = aspect;
+        camera.top = 1;
+        camera.bottom = -1;
+    } else {
+        camera.left = -1;
+        camera.right = 1    ;
+        camera.top = 1 / aspect;
+        camera.bottom = -1 / aspect;
+    }
     camera.updateProjectionMatrix();
 
     // material.uniforms.iResolution.value.set(
