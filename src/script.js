@@ -59,7 +59,10 @@ function resize() {
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    material.uniforms.iResolution.value.set(width, height);
+    material.uniforms.iResolution.value.set(
+        width * window.devicePixelRatio,
+        height * window.devicePixelRatio
+    );
 }
 window.addEventListener("resize", resize);
-resize;
+resize();
