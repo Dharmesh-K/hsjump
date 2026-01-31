@@ -28,16 +28,16 @@ scene.add(camera);
 
 //4. Renderer
 const renderer = new THREE.WebGLRenderer({ canvas: canvas });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); //Read Up!
-renderer.setSize(window.innerWidth , window.innerHeight);
+// renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); //Read Up!
+// renderer.setSize(window.innerWidth , window.innerHeight);
 
 //5. Animation Loop
 function tick() {
     material.uniforms.iTime.value = clock.getElapsedTime();
-    material.uniforms.iResolution.value.set(
-        window.innerWidth,
-        window.innerHeight
-    );
+    // material.uniforms.iResolution.value.set(
+    //     window.innerWidth,
+    //     window.innerHeight
+    // );
 
     renderer.render(scene, camera);
     requestAnimationFrame(tick);
@@ -48,21 +48,24 @@ tick();
 function resize() {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const aspect = width / height;
+    
+    // A. Update Renderer
+    renderer.setSize(width , height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.getDrawingBufferSize(material.uniforms.iResolution.value);
 
+    // B. Update Camera
+    const aspect = width / height;
     camera.left = -aspect;
     camera.right = aspect;
     camera.top = 1;
     camera.bottom = -1;
     camera.updateProjectionMatrix();
 
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-    material.uniforms.iResolution.value.set(
-        width * window.devicePixelRatio,
-        height * window.devicePixelRatio
-    );
+    // material.uniforms.iResolution.value.set(
+    //     width * window.devicePixelRatio,
+    //     height * window.devicePixelRatio
+    // );
 }
 window.addEventListener("resize", resize);
 resize();
