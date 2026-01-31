@@ -3,10 +3,18 @@ precision highp float;
 uniform vec2 iResolution;
 uniform float iTime;
 
+mat2 rot(float a) {
+    float s = sin(a);
+    float c = cos(a);
+    return mat2(c, -s, s, c);
+}
+
 float ringDensity(vec3 p) {
+    
     float r = length(p.xz);
     float inner = 0.0;
     float outer = 4.0;
+    float angle = atan(p.z, p.x);
 
     // Ring Band Pattern
     float bands = sin(r * 40.0);
@@ -28,9 +36,13 @@ void main() {
     // Screen Co-ordinates
     vec2 uv = (gl_FragCoord.xy - 0.5 *  iResolution.xy) / iResolution.y;
 
+    float cycle = 60.0;
+    float tTime = mod(iTime, cycle);
+    //float fadeOut = 1.0 - smoothstep(cycle - 10.0, cycle, tTime);
+    
     // Camera
     vec3 ro = vec3(0.3, 0.0, -6.0);
-    vec3 rd = normalize(vec3(uv, 4.0)); // Focal length adjustor
+    vec3 rd = normalize(vec3(uv, 4.5)); // Focal length adjustor
 
     // Logic
     float t = 0.0;
@@ -38,6 +50,12 @@ void main() {
 
     for (int i = 0; i < 128; i++) {
         vec3 p = ro + rd * t;
+        
+        // Camera rotation increases with time. Add "t" into the equation if you want march-depth driven rotation.
+        // The denominator is a approximation of Keplerian shear - where the Inner parts orbit faster than outer parts!
+        float roll = tTime / (length(p.xz) * 0.7 + 0.5);
+        
+        p.xy = rot(roll) * p.xy;
         float d = ringDensity(p);
         density += d * 0.02;
 
@@ -50,6 +68,11 @@ void main() {
     //vec3 col = mix(sky, ringColor, clamp(density, 0.0, 1.0));
     //gl_FragColor = vec4(vec3(density * 10.0), 1.0);
 
-    float col = clamp(density * 10.0, 0.0, 1.0);
-    gl_FragColor = vec4(vec3(col), 1.0);
+    vec3 sky = vec3(0.0, 0.0, 0.1);
+    vec3 ringColor = vec3(0.9, 0.85, 0.8);
+    vec3 col = mix(sky, ringColor, clamp(density * 10.0, 0.0, 1.0));
+    gl_FragColor = vec4(col, 1.0);
+
+    //float col = clamp(density * 10.0, 0.0, 1.0);
+    //gl_FragColor = vec4(vec3(col), 1.0);
 }

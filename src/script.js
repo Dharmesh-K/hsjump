@@ -43,3 +43,23 @@ function tick() {
     requestAnimationFrame(tick);
 }
 tick();
+
+//6. Resizing Check & Update
+function resize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const aspect = width / height;
+
+    camera.left = -aspect;
+    camera.right = aspect;
+    camera.top = 1;
+    camera.bottom = -1;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    material.uniforms.iResolution.value.set(width, height);
+}
+window.addEventListener("resize", resize);
+resize;
