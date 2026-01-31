@@ -34,9 +34,9 @@ float ringDensity(vec3 p) {
 
 void main() {
     // Screen Co-ordinates
-    //vec2 uv = (gl_FragCoord.xy - 0.5 *  iResolution.xy) / iResolution.y;
-    vec2 uv = gl_FragCoord.xy / iResolution.xy;
-    uv = uv * 2.0 - 1.0;
+    vec2 uv = (gl_FragCoord.xy - 0.5 *  iResolution.xy) / iResolution.y;
+    //vec2 uv = gl_FragCoord.xy / iResolution.xy;
+    //uv = uv * 2.0 - 1.0;
 
     float aspect = iResolution.x / iResolution.y;
     uv.x *= aspect; 
