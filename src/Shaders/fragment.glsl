@@ -35,6 +35,7 @@ float ringDensity(vec3 p) {
 void main() {
     // Screen Co-ordinates
     vec2 uv = (gl_FragCoord.xy - 0.5 *  iResolution.xy) / iResolution.y;
+    uv.x *= iResolution.x / iResolution.y; 
 
     float cycle = 60.0;
     float tTime = mod(iTime, cycle);
