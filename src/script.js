@@ -51,7 +51,7 @@ function resize() {
     
     // A. Update Renderer
     renderer.setSize(width , height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.getDrawingBufferSize(material.uniforms.iResolution.value);
 
     // B. Update Camera
