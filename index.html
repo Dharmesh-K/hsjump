@@ -8,10 +8,32 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <title>Honeysuckle Jump Studios</title>
-    <link rel="stylesheet" href="./src/style.css">
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: black;
+        }
+    </style>
+    <style>
+         @import url('https://fonts.googleapis.com/css2?family=Aladin&display=swap');
+    </style>
 </head>
 <body>
-    <canvas class="webgl"></canvas>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "three/build/three.webgpu.js",
+                "three/webgpu": "three/build/three.webgpu.js",
+                "three/tsl": "three/build/three.tsl.js",
+                "three/addons/": "three/examples/jsm/",
+                "lil-gui": "./node_modules/lil-gui/dist/lil-gui.esm.min.js",
+                "sparkjs/": "./node_modules/sparkjs/"
+        }
+    }
+    </script>
     <script type="module" src="./src/script.js"></script>
 </body>
 </html>

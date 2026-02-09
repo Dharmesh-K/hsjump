@@ -1,78 +1,183 @@
-import * as THREE from "three";
-import vertexShader from "./Shaders/vertex.glsl";
-import fragmentShader from "./Shaders/fragment.glsl";
+    import * as THREE from "three";
+    import { SparkRenderer, PointerControls, SplatMesh, generators } from "@sparkjsdev/spark";
+    import GUI from "lil-gui";
 
-// Pre-requisities
-const canvas = document.querySelector("canvas.webgl");
-const clock = new THREE.Clock();
+    // --- 1. The Integrated "AAA" Styles ---
+    const style = document.createElement('style');
+    style.textContent = `
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+        
+        canvas { display: block; position: fixed; top: 0; left: 0; z-index: 1; }
 
-// 1. Scene
-const scene = new THREE.Scene();
+        .aladin-regular {
+            font-family: "Aladin", system-ui;
+            font-weight: 500;
+            font-style: normal;
+        }
 
-//2. Geometry or Objects
-const geometry = new THREE.PlaneGeometry(2, 2);
-const material = new THREE.ShaderMaterial({
-    vertexShader,
-    fragmentShader,
-    uniforms: {
-        iTime: { value: 0.0 },
-        iResolution: { value: new THREE.Vector2() }
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10; /* Ensures it sits on top of the canvas */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none; /* Let the mouse "see" the 3D scene through the text */
+            color: white;
+            text-align: center;
+            font-family: "Aladin", system-ui;
+            opacity: 0;
+            animation: fadeInUI 2s ease-out forwards;
+            animation-delay: 0.5s;
+        }
+
+        h1 {
+            font-size: 5rem;
+            letter-spacing: 0.1em;
+            margin: 0;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+        }
+
+        .cta-btn {
+            margin-top: 3rem;
+            padding: 1rem 3.5rem;
+            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            cursor: pointer;
+            pointer-events: auto; /* Clickable even if parent is none */
+            backdrop-filter: blur(8px);
+            transition: 0.4s all ease;
+        }
+
+        .cta-btn:hover { background: white; color: black; transform: scale(1.05); }
+
+        @keyframes fadeInUI {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // --- 2. Create the UI ---
+    // To add in the empty line after <p style></p> in the UI layer: <button class="cta-btn">Home</button>
+    const ui = document.createElement('div');
+    ui.id = 'ui-layer';
+    ui.innerHTML = `
+        <h1>Honeysuckle Jump Studios</h1>
+        <p style="opacity: 0.6; font-size: 2.0rem; letter-spacing: 0.2em;">Harbourer of Stories</p>
+        
+    `;
+    document.body.appendChild(ui);
+
+    const SCENE_CONFIG = {
+        SNOW_HEIGHT: 8,
+        HALF_WIDTH: 12,
+        HALF_DEPTH: 48,
+        SNOW_MIN_Y: -4,
+        CAMERA_DURATION: 90,
     }
-});
-const mesh = new THREE.Mesh(geometry, material);
-scene.add(mesh);
 
-//3. Camera (fullscreen Ortho)
-const camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1);
-scene.add(camera);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-//4. Renderer
-const renderer = new THREE.WebGLRenderer({ canvas: canvas });
-// renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); //Read Up!
-// renderer.setSize(window.innerWidth , window.innerHeight);
-
-//5. Animation Loop
-function tick() {
-    material.uniforms.iTime.value = clock.getElapsedTime();
-    // material.uniforms.iResolution.value.set(
-    //     window.innerWidth,
-    //     window.innerHeight
-    // );
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(tick);
-}
-tick();
-
-//6. Resizing Check & Update
-function resize() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    
-    // A. Update Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(width , height, false);
-    renderer.getDrawingBufferSize(material.uniforms.iResolution.value);
+    document.body.appendChild(renderer.domElement);
 
-    // // B. Update Camera
-    // const aspect = width / height;
-    // if(aspect > 1) {
-    //     camera.left = -aspect;
-    //     camera.right = aspect;
-    //     camera.top = 1;
-    //     camera.bottom = -1;
-    // } else {
-    //     camera.left = -1;
-    //     camera.right = 1    ;
-    //     camera.top = 1 / aspect;
-    //     camera.bottom = -1 / aspect;
-    // }
-    // camera.updateProjectionMatrix();
+    const spark = new SparkRenderer({ renderer });
+    scene.add(spark);
 
-    // material.uniforms.iResolution.value.set(
-    //     width * window.devicePixelRatio,
-    //     height * window.devicePixelRatio
+    function resize() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    // const background = new SplatMesh({ url: "/jayanagar_street.spz" });
+    // background.quaternion.set(1, 0, 0, 0);
+    // background.position.set(
+    //     background.position.x - 8,
+    //     background.position.y - 12,
+    //     background.position.z - 104,
     // );
-}
-window.addEventListener("resize", resize);
-resize();
+    // scene.add(background);
+    // await background.initialized;
+
+    const controls = new PointerControls({ canvas: renderer.domElement });
+    const mouse = new THREE.Vector2(0, 0);
+
+    window.addEventListener("mousemove", (event) => {
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    const cam = camera.position;
+    const snowVolumeBox = new THREE.Box3(
+        new THREE.Vector3(
+            cam.x - SCENE_CONFIG.HALF_WIDTH,
+            cam.y - (SCENE_CONFIG.SNOW_HEIGHT * 8),
+            cam.y - (SCENE_CONFIG.SNOW_HEIGHT * 8),
+        ),
+        new THREE.Vector3(
+            cam.x + SCENE_CONFIG.HALF_WIDTH,
+            cam.y + SCENE_CONFIG.SNOW_HEIGHT  * 2,
+            cam.z + SCENE_CONFIG.HALF_DEPTH / 128,
+        ),
+    );
+
+    const snow = generators.snowBox({
+        ...generators.DEFAULT_SNOW,
+        box: snowVolumeBox.clone(),
+        minY: SCENE_CONFIG.SNOW_MIN_Y,
+        color1: new THREE.Color(1.0, 1.0, 1.0),
+        color2: new THREE.Color(0.91, 0.9, 0.97),
+        density: 5000,
+        maxScale: 0.02,
+    });
+    scene.add(snow.snow);
+
+    let lastTime;
+    renderer.setAnimationLoop(function animate(time) {
+        const t = time * 0.001;
+        const dt = t - (lastTime ?? t);
+        lastTime = t;
+
+        controls.update(dt, camera);
+
+        // Target a small rotation based on mouse position
+        const targetRotationY = mouse.x * 0.25;
+        const targetRotationX = mouse.y * 0.25;
+
+        // Use lerp to "slide" the rotation smoothly toward the target
+        camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, targetRotationY, 0.05);
+        camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetRotationX, 0.05);
+
+        // camera movement
+        const targetZ = -13.5;
+        const startZ = 0;
+        const duration = 90;
+        const progress = Math.min(1, t / duration);
+        const smoothProgress = Math.sin(progress * Math.PI * 0.5);
+        camera.position.z = startZ + (targetZ - startZ) * smoothProgress;
+
+        // if (!params.isPaused) {
+        // snow.fallVelocity.value = params.fallVelocity;
+        // snow.wanderScale.value = params.wanderScale;
+        // snow.wanderVariance.value = params.wanderVariance;
+        // snow.maxScale.value = params.maxScale;
+        // }
+
+        renderer.render(scene, camera);
+    });
