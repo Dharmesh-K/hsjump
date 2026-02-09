@@ -1,6 +1,5 @@
     import * as THREE from "three";
     import { SparkRenderer, PointerControls, SplatMesh, generators } from "@sparkjsdev/spark";
-    import GUI from "lil-gui";
 
     // --- 1. The Integrated "AAA" Styles ---
     const style = document.createElement('style');
