@@ -91,8 +91,25 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     document.body.appendChild(renderer.domElement);
 
-    const spark = new SparkRenderer({ renderer });
+    const spark = new SparkRenderer({ 
+        renderer,
+        apertureAngle: 0.1,
+        focalDistance: 8.0,
+     });
     scene.add(spark);
+
+    const apertureSize = {
+        apertureSize: 0.1,
+    };
+
+    function updateAperture() {
+        if (spark.focalDistance > 0) {
+            spark.apertureAngle = 2 * Math.atan(0.5 * apertureSize.apertureSize / spark.focalDistance);
+        } else {
+            spark.apertureAngle = 0.1; // default value when focal distance is zero or negative
+        }
+    }
+    updateAperture();
 
     function resize() {
         const width = window.innerWidth;
@@ -103,16 +120,6 @@
     }
     resize();
     window.addEventListener("resize", resize);
-
-    // const background = new SplatMesh({ url: "/jayanagar_street.spz" });
-    // background.quaternion.set(1, 0, 0, 0);
-    // background.position.set(
-    //     background.position.x - 8,
-    //     background.position.y - 12,
-    //     background.position.z - 104,
-    // );
-    // scene.add(background);
-    // await background.initialized;
 
     const controls = new PointerControls({ canvas: renderer.domElement });
     const mouse = new THREE.Vector2(0, 0);
@@ -141,7 +148,7 @@
         box: snowVolumeBox.clone(),
         minY: SCENE_CONFIG.SNOW_MIN_Y,
         color1: new THREE.Color(1.0, 1.0, 1.0),
-        color2: new THREE.Color(0.91, 0.9, 0.97),
+        color2: new THREE.Color(0.580, 0.949, 0.957),
         density: 5000,
         maxScale: 0.02,
     });
@@ -170,13 +177,6 @@
         const progress = Math.min(1, t / duration);
         const smoothProgress = Math.sin(progress * Math.PI * 0.5);
         camera.position.z = startZ + (targetZ - startZ) * smoothProgress;
-
-        // if (!params.isPaused) {
-        // snow.fallVelocity.value = params.fallVelocity;
-        // snow.wanderScale.value = params.wanderScale;
-        // snow.wanderVariance.value = params.wanderVariance;
-        // snow.maxScale.value = params.maxScale;
-        // }
 
         renderer.render(scene, camera);
     });
