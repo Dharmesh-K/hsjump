@@ -106,7 +106,7 @@
         /* The Menu Container */
         #menu-overlay::before {
             content: "";
-            position: absolute;git 
+            position: absolute; 
             inset: 0;
             background: url("/noise.jpg");
             opacity: 0.1;
