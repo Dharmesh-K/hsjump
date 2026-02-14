@@ -106,7 +106,7 @@
         /* The Menu Container */
         #menu-overlay::before {
             content: "";
-            position: absolute;
+            position: absolute;git 
             inset: 0;
             background: url("/noise.jpg");
             opacity: 0.1;
@@ -169,14 +169,23 @@
 
         @media (max-width: 768px) {
 
+            #ui-layer {
+                padding: 0 1.5rem;
+            }
+
             h1 {
-                font-size: 2.5rem;
-                letter-spacing: 0.05em;
+                font-size: 2.6rem;
+                letter-spacing: 0.04em;
+                line-height: 1.1;
+                max-width: 12ch;
+                margin: 0 auto;
+                text-wrap: balance;
             }
 
             #ui-layer p {
                 font-size: 1rem !important;
                 letter-spacing: 0.1em !important;
+                margin-top: 1rem;
             }
 
             .nav-toggle {
