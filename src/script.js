@@ -178,7 +178,7 @@
         }
 
         #ui-layer p {
-            font-size: 1.1rem !important;
+            font-size: 1.4rem !important;
             letter-spacing: 0.12em !important;
             margin-top: 1rem;
         }
