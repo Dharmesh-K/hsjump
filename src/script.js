@@ -169,47 +169,35 @@
 
         @media (max-width: 768px) {
 
-            #ui-layer {
-                position: fixed; /* Locked to the screen, not the canvas */
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%); /* The gold standard for centering */
-                width: 100%;
-                padding: 0 1.5rem;
-                box-sizing: border-box;
-                text-align: center;
-                margin: 0;
-            }
-
-            h1 {
-                margin-left: auto !important;
-                margin-right: auto !important;
-                display: block;
-                font-size: 2.8rem;
-                letter-spacing: 0.04em;
-                line-height: 1.15;
-            }
-
-            #ui-layer p {
-                margin-left: auto !important;
-                margin-right: auto !important;
-                display: block;
-                font-size: 1.1rem !important;
-                letter-spacing: 0.1em !important;
-                margin-top: 1rem;
-            }
-
-            .nav-toggle {
-                width: 52px;
-                height: 52px;
-                top: 1.5rem;
-                right: 1.5rem;
-            }
-
-            .menu-link {
-                font-size: 2rem;
-            }
+        #ui-layer {
+            padding: 0 1.5rem;
+            text-align: center;
         }
+
+        h1 {
+            font-size: 2.8rem;
+            letter-spacing: 0.04em;
+            line-height: 1.15;
+            margin: 0 auto;
+        }
+
+        #ui-layer p {
+            font-size: 1.1rem !important;
+            letter-spacing: 0.12em !important;
+            margin-top: 1rem;
+        }
+
+        .nav-toggle {
+            width: 52px;
+            height: 52px;
+            top: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .menu-link {
+            font-size: 2rem;
+        }
+    }
     `;
     document.head.appendChild(style);
 
