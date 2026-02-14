@@ -175,11 +175,10 @@
             }
 
             h1 {
-                font-size: 2.6rem;
+                font-size: 2.8rem;
                 letter-spacing: 0.04em;
-                line-height: 1.1;
+                line-height: 1.15;
                 margin: 0 auto;
-                text-wrap: balance;
             }
 
             #ui-layer p {
