@@ -169,10 +169,6 @@
 
         @media (max-width: 768px) {
 
-        #ui-layer {
-            padding: 0 1.5rem;
-            text-align: center;
-        }
 
         h1 {
             font-size: 2.8rem;
@@ -191,6 +187,7 @@
             width: 52px;
             height: 52px;
             top: 1.5rem;
+            right: 1.5rem;
         }
 
         .menu-link {
