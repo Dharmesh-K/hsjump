@@ -170,17 +170,30 @@
         @media (max-width: 768px) {
 
             #ui-layer {
-                padding: 1rem;
+                position: fixed; /* Locked to the screen, not the canvas */
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%); /* The gold standard for centering */
+                width: 100%;
+                padding: 0 1.5rem;
+                box-sizing: border-box;
                 text-align: center;
+                margin: 0;
             }
 
             h1 {
+                margin-left: auto !important;
+                margin-right: auto !important;
+                display: block;
                 font-size: 2.8rem;
                 letter-spacing: 0.04em;
                 line-height: 1.15;
             }
 
             #ui-layer p {
+                margin-left: auto !important;
+                margin-right: auto !important;
+                display: block;
                 font-size: 1.1rem !important;
                 letter-spacing: 0.1em !important;
                 margin-top: 1rem;
