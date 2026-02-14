@@ -178,7 +178,6 @@
                 font-size: 2.8rem;
                 letter-spacing: 0.04em;
                 line-height: 1.15;
-                margin: 0 auto;
             }
 
             #ui-layer p {
