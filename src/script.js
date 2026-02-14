@@ -170,7 +170,7 @@
         @media (max-width: 768px) {
 
         #ui-layer {
-            padding: 0 1.5rem;
+            padding: 1.5rem 1.5rem;
             text-align: center;
         }
 
@@ -178,7 +178,7 @@
             font-size: 2.8rem;
             letter-spacing: 0.04em;
             line-height: 1.15;
-            margin: 0 auto;
+            margin: auto auto;
         }
 
         #ui-layer p {
