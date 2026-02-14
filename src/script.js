@@ -171,13 +171,13 @@
 
             #ui-layer {
                 padding: 0 1.5rem;
+                text-align: center;
             }
 
             h1 {
                 font-size: 2.6rem;
                 letter-spacing: 0.04em;
                 line-height: 1.1;
-                max-width: 12ch;
                 margin: 0 auto;
                 text-wrap: balance;
             }
