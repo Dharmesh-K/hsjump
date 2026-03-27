@@ -1,83 +1,129 @@
 precision highp float;
 
-uniform vec2 iResolution;
 uniform float iTime;
+uniform vec2 iResolution;
+uniform vec4 iMouse;
+uniform sampler2D iChannel0; // Feedback Texture
+uniform mat4 cameraMatrix;
 
-mat2 rot(float a) {
-    float s = sin(a);
-    float c = cos(a);
-    return mat2(c, -s, s, c);
+// Part (A): COMMON FUNCTIONS //
+
+// --- 1. Dave Hoskins: https://www.shadertoy.com/view/4djSRW --- //
+float hash13(vec3 p3) {
+    p3 = fract(p3 * 0.1031);
+    p3 *= dot(p3, p3.zyx + 31.32); // changed this to /= from *= for slightly better visuals from my POV
+    return fract((p3.x + p3.y) * p3.z);
 }
 
-float ringDensity(vec3 p) {
+// --- 2. La Layenda Inigo Quilez: https://iquilezles.org/articles/distfunctions --- //
+float smin( float d1, float d2, float k ) {
+    float h = clamp( 0.5 + 0.5*(d2-d1)/k, 0.0, 1.0 );
+    return mix( d2, d1, h ) - k*h*(1.0-h); 
+}
+float smoothing(float d1, float d2, float k) { 
+    return clamp( 0.5 + 0.5*(d2-d1)/k, 0.0, 1.0 ); 
+}
+
+// --- 3. Rotation Matrix --- //
+mat2 rot(float a) { 
+    return mat2(cos(a),-sin(a),sin(a),cos(a)); 
+}
+// --- 4. Repeat Helper Function --- //
+vec3 repeat(vec3 p, float grid) {
+    return mod(p + grid * 0.5, grid) - grid * 0.5;
+}
+
+// Part (B): SHADER LOGIC by Leon called "Taste of Noise 7": https://www.shadertoy.com/view/NddSWs //
+
+float material;
+float rng;
+
+float map(vec3 p) {
+    float t = iTime * 1.0 + rng * 0.9;
+    float grid = 5.0;
+    vec3 cell = floor(p / grid);
+    p = repeat(p, grid);
     
-    float r = length(p.xz);
-    float inner = 0.0;
-    float outer = 4.0;
-    float angle = atan(p.z, p.x);
-
-    // Ring Band Pattern
-    float bands = sin(r * 40.0);
-    bands = smoothstep(0.2, 0.6, bands);
-
-    // Thin Vertical Thickness
-    float thickness = exp(-abs(p.y) * 8.0);
-
-    // Micro Chaos
-    float chaos = sin(p.x * 20.0 + iTime) * (0.31415 * tan(p.z * 20.0));
-
-    // Ring Mask
-    //float ringMask = smoothstep(inner, inner + 0.2, r) * (1.0 - smoothstep(outer - 0.2, outer, r));
-
-    return bands * thickness * chaos; // Add in Ring Mask for more control
+    float dp = length(p);
+    vec3 angle = vec3(0.1, -0.5, 0.1) + dp * 0.5 + p * 0.1 + cell;
+    float size = sin(rng * 3.14);
+    float wave = sin(-dp * 1.0 + t + hash13(cell) * 6.28) * 0.5;
+    
+    const int count = 4;
+    float a = 1.0;
+    float scene = 1000.0;
+    float shape = 1000.0;
+    
+    for (int index = 0; index < count; ++index) {
+        p.xz = abs(p.xz)-(0.5 + wave) * a;
+        p.xz *= rot(angle.y/a);
+        p.yz *= rot(angle.x/a);
+        p.yx *= rot(angle.z/a);
+        shape = length(p)-0.2 * a * size;
+        material = mix(material, float(index), smoothing(shape, scene, 0.3*a));
+        scene = smin(scene, shape, 1.0 * a);
+        a /= 1.9;
+    }
+    return scene;
 }
 
 void main() {
-    // Screen Co-ordinates
-    //vec2 uv = (gl_FragCoord.xy - 0.5 *  iResolution.xy) / iResolution.y;
-    vec2 uv = gl_FragCoord.xy / iResolution.xy;
-    uv = uv * 2.0 - 1.0;
-
-    float aspect = iResolution.x / iResolution.y;
-    uv.x *= aspect; 
-
-    float cycle = 60.0;
-    float tTime = mod(iTime, cycle);
-    //float fadeOut = 1.0 - smoothstep(cycle - 10.0, cycle, tTime);
+    // 1. Setup Coordinates
+    vec2 fragCoord = gl_FragCoord.xy;
+    material = 0.0;
     
-    // Camera
-    vec3 ro = vec3(0.3, 0.0, -6.0);
-    vec3 rd = normalize(vec3(uv, 2.5)); // Focal length adjustor
+    // Standardized UV for raymarching
+    vec2 uv = (fragCoord - iResolution.xy * 0.5) / iResolution.y;
 
-    // Logic
-    float t = 0.0;
-    float density = 0.0;
+    // 2. Camera Matrix Integration (The "Bridge")
+    // ro = Ray Origin (World position of the Three.js camera)
+    vec3 ro = cameraMatrix[3].xyz;
+    
+    // Extract camera direction vectors from the matrix
+    vec3 right   = cameraMatrix[0].xyz;
+    vec3 up      = cameraMatrix[1].xyz;
+    vec3 forward = -cameraMatrix[2].xyz; // Three.js cameras look down -Z
+    
+    // rd = Ray Direction (Calculating perspective rays)
+    // The 2.0 is the "Lens" (Focal Length). Increase for zoom, decrease for wide-angle.
+    vec3 rd = normalize(uv.x * right + uv.y * up + 2.0 * forward);
 
-    for (int i = 0; i < 128; i++) {
-        vec3 p = ro + rd * t;
-        
-        // Camera rotation increases with time. Add "t" into the equation if you want march-depth driven rotation.
-        // The denominator is a approximation of Keplerian shear - where the Inner parts orbit faster than outer parts!
-        float roll = tTime / (length(p.xz) * 0.7 + 0.5);
-        
-        p.xy = rot(roll) * p.xy;
-        float d = ringDensity(p);
-        density += d * 0.02;
-
-        t += 0.5;
+    // 3. Initialize Raymarching
+    vec3 pos = ro;
+    vec3 ray = rd;
+    rng = hash13(vec3(fragCoord, iTime));
+    
+    // 4. The Loop
+    const float steps = 30.0;
+    float index;
+    for (index = steps; index > 0.0; --index) {
+        float dist = map(pos);
+        if (dist < 0.01) break;
+        // Jittering the distance slightly for "soft" noise look
+        dist *= 0.9 + 0.1 * rng; 
+        pos += ray * dist;
     }
+    
+    // 5. Lighting & Coloring
+    float shade = index / steps;
+    vec2 off = vec2(0.001, 0.0);
+    vec3 normal = normalize(map(pos) - vec3(map(pos - off.xyy), map(pos - off.yxy), map(pos - off.yyx)));
+    vec3 tint = 0.5 + 0.5 * cos(vec3(3,2,1) + material * 0.5 + length(pos) * 0.5);
 
-    // *** Debug Output - left in for future updates! ***
-    //vec3 sky = vec3(0.6, 0.8, 1.0);
-    //vec3 ringColor = vec3(0.9, 0.85, 0.8);
-    //vec3 col = mix(sky, ringColor, clamp(density, 0.0, 1.0));
-    //gl_FragColor = vec4(vec3(density * 10.0), 1.0);
+    // Basic Lighting
+    float ld = dot(reflect(ray, normal), vec3(0,1,0)) * 0.5 + 0.5;
+    vec3 light = vec3(1.000, 0.502, 0.502) * sqrt(ld);
+    ld = dot(reflect(ray, normal), vec3(0,0,-1)) * 0.5 + 0.5;
+    light += vec3(0.400, 0.714, 0.145) * sqrt(ld) * 0.5;
 
-    vec3 sky = vec3(0.0, 0.0, 0.1);
-    vec3 ringColor = vec3(0.9, 0.85, 0.8);
-    vec3 col = mix(sky, ringColor, clamp(density * 10.0, 0.0, 1.0));
-    gl_FragColor = vec4(col, 1.0);
+    // 6. Final Color & Stabilized Feedback
+    vec3 currentRGB = (tint + light) * shade;
 
-    //float col = clamp(density * 10.0, 0.0, 1.0);
-    //gl_FragColor = vec4(vec3(col), 1.0);
+    // Use the UV fix to prevent "tearing" during camera movement
+    vec2 uvFeedback = (floor(fragCoord) + 0.5) / iResolution.xy;
+    vec4 lastFrame = texture2D(iChannel0, uvFeedback);
+    
+    // Stable feedback loop: max() can be aggressive, so we clamp the gain
+    vec3 accumulated = max(currentRGB * 1.05, lastFrame.rgb - 0.008);
+    gl_FragColor = vec4(clamp(accumulated, 0.0, 1.0), 1.0);
 }
