@@ -314,6 +314,7 @@ const tick = () => {
     controls.update();
     const elapsedTime = clock.getElapsedTime() * 0.5;
     material.uniforms.iTime.value = elapsedTime;
+    camera.updateMatrixWorld();
     material.uniforms.cameraMatrix.value.copy(camera.matrixWorld);
     
     // A. Tell the shader to use the texture from RenderTarget B (Previous Frame)
