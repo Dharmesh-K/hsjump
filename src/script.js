@@ -278,17 +278,35 @@ const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
 // 6. Pixel Ratio owing to drop in sharpness otherwise
-const dpr = Math.min(window.devicePixelRatio, 2);
-renderer.setPixelRatio(dpr);
+const getSizes = () => {
+    const dpr = Math.min(window.devicePixelRatio, 2);
+    return {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        bufferWidth: Math.floor(window.innerWidth * dpr),
+        bufferHeight: Math.floor(window.innerHeight * dpr),
+        dpr
+    };
+}
 
 // 7. Resizing Handler
 window.addEventListener('resize', () => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    renderer.setSize(w, h);
-    renderTargetA.setSize(w * dpr, h * dpr);
-    renderTargetB.setSize(w * dpr, h * dpr);
-    material.uniforms.iResolution.value.set(w * dpr, h * dpr);
+    const s = getSizes();
+
+    // Update Renderer
+    renderer.setSize(s.width, s.height);
+    renderer.setPixelRatio(s.dpr);
+
+    // Update Render Targets to match the high-res buffer
+    renderTargetA.setSize(s.bufferWidth, s.bufferHeight);
+    renderTargetB.setSize(s.bufferWidth, s.bufferHeight);
+
+    // Update Uniforms
+    material.uniforms.iResolution.value.set(s.bufferWidth, s.bufferHeight);
+    
+    // Update Camera
+    camera.aspect = s.width / s.height;
+    camera.updateProjectionMatrix();
 });
 
 // 8. Animation Loop
