@@ -144,19 +144,21 @@ export class Engine {
         defaultMaterial.outputNode = halftones(output);
 
         // GTB Asset
-        const gltfloader = new GLTFLoader();
-        gltfloader.load (
-            "/testplan.glb",
-            (gltf) => {
-                const model = gltf.scene;
-                model.scale.setScalar(2.5);
-                model.traverse((child) => {
-                    if(child.isMesh)
-                        child.material.outputNode = halftones(output);
-                });
-                this.scene.add(model);
-            }
-        );
+        setTimeout(() => {
+            const gltfloader = new GLTFLoader();
+            gltfloader.load (
+                "/testplan.glb",
+                (gltf) => {
+                    const model = gltf.scene;
+                    model.scale.setScalar(2.5);
+                    model.traverse((child) => {
+                        if(child.isMesh)
+                            child.material.outputNode = halftones(output);
+                    });
+                    this.scene.add(model);
+                }
+            );  
+        }, 100);
 
         // Controls
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
