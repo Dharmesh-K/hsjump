@@ -36,6 +36,9 @@ export class Engine {
         // Renderer
         this.renderer = new THREE.WebGPURenderer({ canvas: this.canvas, antialias: true, alpha: true });
         this.renderer.setClearColor(0x000000, 0);
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.0;
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         await this.renderer.init();
