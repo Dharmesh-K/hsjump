@@ -1,3 +1,5 @@
+/** DEPRECATED - NOT IN USE FOR NOW */
+
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import vertexShader from "./shaders/vertex.glsl";

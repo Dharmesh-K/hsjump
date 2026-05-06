@@ -1,0 +1,346 @@
+/* =========================
+   Global Styling Base
+========================= */
+
+body, html { 
+    margin: 0; 
+    padding: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: #111; 
+}
+
+body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+/* =========================
+   WEBGPU CANVAS
+========================= */
+
+canvas {
+    width: 100vw;
+    height: 100vh; 
+    display: block; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    z-index: 1; 
+    pointer-events: auto;
+}
+
+/* =========================
+   UI/Text Layer
+========================= */
+
+#ui-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    pointer-events: none;
+
+    color: white;
+    text-align: center;
+    font-family: "Aladin", system-ui;
+
+    opacity: 0;
+    transition: transform 1s ease;
+    transform: translateY(10px);
+    animation: fadeInUI 2s ease-in-out forwards;
+    animation-delay: 0.5s;
+
+    will-change: opacity, transform;
+}
+
+h1 {
+    font-size: clamp(3rem, 6vw, 6rem);
+    color: #F0FFF0;
+    letter-spacing: 0.08em;
+    line-height: 1.05;
+    margin: 0;
+    filter: drop-shadow(0 0 20px rgba(24, 129, 42, 0.6));
+}
+
+#ui-layer p {
+    font-size: clamp(1.2rem, 2vw, 2.2rem);
+    letter-spacing: 0.18em;
+    opacity: 0.85;
+}
+
+/* =========================
+   CTA Button
+========================= */
+
+.cta-btn {
+    margin-top: 3rem;
+    padding: 1rem 3.5rem;
+    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.05);
+    color: #F0FFF0;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    cursor: pointer;
+    pointer-events: auto;
+    backdrop-filter: blur(8px);
+    transition: 0.4s all ease;
+}
+
+.cta-btn:hover { 
+    background: white; 
+    color: black; 
+    transform: scale(1.05); 
+}
+
+/* =========================
+   Menu and Back Button
+========================= */
+
+.ui-btn {
+    width: 64px;
+    height: 64px;
+    position: fixed;
+    top: 2rem;
+    z-index: 100;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(32px) saturate(200%) sepia(100%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%) sepia(100%);
+
+    clip-path: polygon(
+        25% 5%, 75% 5%,
+        95% 50%, 75% 95%,
+        25% 95%, 5% 50%
+    );
+
+    cursor: pointer;
+
+    transition: transform 0.5s cubic-bezier(0.23,1,0.32,1),
+                background 0.3s ease;
+}
+
+.nav-toggle {
+    right: 2rem;
+}
+
+.back-btn {
+    left: 2rem;
+    
+    font-size: 1.5rem;
+    font-family: "Aladin", system-ui;
+    color: white;
+}
+    
+.nav-toggle span, 
+.back-btn span {
+    width: 24px;
+    height: 1px;
+    background: white;
+
+    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1),
+                opacity 0.1s ease;
+}
+
+.nav-toggle:hover, 
+.back-btn:hover {
+    transform: scale(1.15) rotate(90deg);
+    background: rgba(255,255,255,0.12);
+}
+
+.nav-toggle:focus,
+.menu-link:focus,
+.back-btn:focus {
+    outline: 2px solid white;
+    outline-offset: 4px;
+}
+
+/* =========================
+   Menu Overlay for Content
+========================= */
+
+#menu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: radial-gradient(
+        circle at center,
+        rgba(20, 30, 50, 0.6),
+        rgba(5, 10, 20, 0.85)
+    );
+
+    backdrop-filter: blur(40px) saturate(140%);
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: opacity 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+
+    will-change: opacity;
+}
+
+/* subtle grain - not needed/used for now */
+#menu-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("/noise.jpg");
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+/* =========================
+   Menu CTA Links
+========================= */
+
+.menu-link {
+    display: block;
+    margin: 1rem 0;
+
+    font-size: 3rem;
+    font-family: "Aladin", system-ui;
+    color: white;
+
+    position: relative;
+
+    transition: 
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.4s ease,
+        letter-spacing 0.4s ease;
+}
+
+.menu-link:hover {
+    transform: translateY(-8px) scale(1.05);
+    letter-spacing: 0.175em;
+    text-shadow: 
+        0 0 10px rgba(255,255,255,0.5),
+        0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+/* =========================
+   Menu Open State
+========================= */
+
+body.menu-open #menu-overlay {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.menu-open #menu-main:hover .menu-link {
+    opacity: 0.25;
+}
+
+body.menu-open #menu-main .menu-link:hover {
+    opacity: 1;
+}
+
+/* staggered animation */
+body.menu-open .menu-link {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body.menu-open .menu-link:nth-child(1) { transition-delay: 0.1s; }
+body.menu-open .menu-link:nth-child(2) { transition-delay: 0.2s; }
+body.menu-open .menu-link:nth-child(3) { transition-delay: 0.3s; }
+
+/* hamburger to X */
+body.menu-open .nav-toggle span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+body.menu-open .nav-toggle span:nth-child(2) {
+    opacity: 0;
+}
+
+body.menu-open .nav-toggle span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* lock scroll */
+body.lock-scroll {
+    overflow: hidden;
+}
+
+/* =========================
+   Animations
+========================= */
+
+@keyframes fadeInUI {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================
+   Menu Contents
+========================= */
+
+#menu-content {
+    position: absolute;
+    inset: 0;
+    font-size: 3rem;
+    font-family: "Aladin", system-ui;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto;
+
+    text-align: center;
+    padding: 5vw;
+    box-sizing: border-box;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+/* To Hide Scrollbar for Chrome, Safari and Opera */
+#menu-content::-webkit-scrollbar {
+    display: none;
+}
+
+/* To Hide Scrollbar for IE, Edge and Firefox */
+#menu-content {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+#menu-content p {
+    font-size: 2.5rem;
+    max-width: 100%;
+    line-height: 1.5;
+    margin: 2.5rem 5.0rem;
+}
+
+/* When actually viewing the content */
+body.view-content #menu-main {
+    opacity: 0;
+    pointer-events: none;
+}
+
+body.view-content #menu-content {
+    opacity: 1;
+    pointer-events: auto;
+}
