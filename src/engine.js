@@ -4,7 +4,6 @@ import * as THREE from "three/webgpu";
 import { color, mix, normalWorld, output, Fn, uniform, vec4, rotate, screenCoordinate, screenSize } from "three/tsl";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
-import { GUI } from 'lil-gui';
 
 import { APP_STATE } from "./state.js";
 
@@ -17,7 +16,6 @@ export class Engine {
         this.controls = null;
         this.timer = null;
         this.halftoneSettings = null;
-        this.gui = null;
 
         this.listentoState();
     }
@@ -168,27 +166,8 @@ export class Engine {
         this.controls.minDistance = 0.1;
         this.controls.maxDistance = 50;
 
-        this.initGUI();
         window.addEventListener("resize", () => this.onWindowResize);
         console.log("Engine Iniliased");
-    }
-
-    initGUI() {
-        this.gui = new GUI();
-        this.gui.domElement.style.zIndex = "9999";
-        const camFolder = this.gui.addFolder("Camera Position")
-
-        camFolder.add(this.camera.position, 'x', -100, 100).step(0.1).listen();
-        camFolder.add(this.camera.position, 'y', -100, 100).step(0.1).listen();
-        camFolder.add(this.camera.position, 'z', -100, 100).step(0.1).listen();
-
-        const params = {
-            logPosition: () => {
-                console.log(`Camera: ${this.camera.position.x.toFixed(2)}, ${this.camera.position.y.toFixed(2)}, ${this.camera.position.z.toFixed(2)}`);
-            }
-        };
-        camFolder.add(params, 'logPosition').name('Log to Console');
-        camFolder.open();
     }
 
     listentoState() {
