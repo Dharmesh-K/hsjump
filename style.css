@@ -334,6 +334,16 @@ body.lock-scroll {
     margin: 2.5rem 5.0rem;
 }
 
+@media (max-width: 768px) {
+    #menu-content {
+        font-size: 2.5rem;
+    }
+    #menu-content p {
+        font-size: 1.7rem;
+        margin: 1rem 2rem;
+    }
+}
+
 /* When actually viewing the content */
 body.view-content #menu-main {
     opacity: 0;
