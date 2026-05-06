@@ -202,7 +202,7 @@ h1 {
     content: "";
     position: absolute;
     inset: 0;
-    background: url("/noise.jpg");
+    /* background: url("/noise.jpg"); */
     opacity: 0.08;
     pointer-events: none;
 }
