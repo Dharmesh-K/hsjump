@@ -148,7 +148,7 @@ export class Engine {
         // GTLF Asset
         const gltfloader = new GLTFLoader();
         gltfloader.load (
-            "./public/testplan.glb",
+            "/testplan.glb",
             (gltf) => {
                 const model = gltf.scene;
                 model.scale.setScalar(2.5);
