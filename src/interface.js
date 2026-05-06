@@ -81,7 +81,7 @@ export class UIManager {
             `,
 
             contact: () => `
-                <h3>Inquiries</h3>
+                <h3>Enquiries</h3>
                 <p>Whether you are interested in our technical pipeline or a future collaboration, we would love to hear from you.</p>
                 <p>Reach out at: <em>enquiries@hsjump.com</em></p>
                 <h3>Careers</h3>
