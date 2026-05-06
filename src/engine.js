@@ -143,12 +143,7 @@ export class Engine {
         });
         defaultMaterial.outputNode = halftones(output);
 
-        // Object/(s) - Test includes only the Torus Knot
-        // const torusKnot = new THREE.Mesh(new THREE.TorusKnotGeometry(0.6, 0.25, 128, 32), defaultMaterial);
-        // torusKnot.position.x = 3;
-        // this.scene.add(torusKnot);
-
-        // GTLF Asset
+        // GTB Asset
         const gltfloader = new GLTFLoader();
         gltfloader.load (
             "/testplan.glb",
