@@ -164,7 +164,7 @@ export class Engine {
         this.controls.minDistance = 0.1;
         this.controls.maxDistance = 50;
 
-        window.addEventListener("resize", () => this.onWindowResize);
+        window.addEventListener("resize", () => this.onWindowResize());
         console.log("Engine Iniliased");
     }
 
