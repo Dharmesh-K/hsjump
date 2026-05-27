@@ -51,8 +51,8 @@ export class Engine {
         this.renderer.outputColorSpace = THREE.SRGBColorSpace;
 
         // RenderPipeline
-        this.renderPipeline = new THREE.RenderPipeline(this.renderer);
-        this.renderPipeline.outputNode = pass(this.scene, this.camera);
+        // this.renderPipeline = new THREE.RenderPipeline(this.renderer);
+        // this.renderPipeline.outputNode = pass(this.scene, this.camera);
 
         // Lighting
         const sphereGeometry = new THREE.SphereGeometry(0.02, 16, 8);
@@ -158,7 +158,7 @@ export class Engine {
     }
 
     render() {
-        this.renderPipeline.render();
+        this.renderer.render(this.scene, this.camera);
     }
 
 }
