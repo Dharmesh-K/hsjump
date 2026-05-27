@@ -156,7 +156,7 @@ canvas {
     left: 2rem;
     
     font-size: 1.5rem;
-    font-family: "Aladin", system-ui;
+    font-family: "Clash Display", system-ui;
     color: white;
 }
     
@@ -217,7 +217,6 @@ canvas {
     content: "";
     position: absolute;
     inset: 0;
-    background: url("/noise.jpg");
     opacity: 0.08;
     pointer-events: none;
 }
