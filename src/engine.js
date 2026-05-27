@@ -1,11 +1,16 @@
-/** Engine - WebGPU/TSL/GLTF Asset Loader */
+/** Engine - WebGPU/TSL */
+/** Main 3D Point Cloud Scene is the courtesy of the eponymous Mr. Doob (repo: https://github.com/mrdoob/three.js/blob/master/examples/webgpu_lights_custom.html) */
 
 import * as THREE from "three/webgpu";
-import { color, mix, normalWorld, output, Fn, uniform, vec4, rotate, screenCoordinate, screenSize } from "three/tsl";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
-import { GLTFLoader } from "three/examples/jsm/Addons.js";
-
+import { color, lights, pass } from "three/tsl";
 import { APP_STATE } from "./state.js";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
+
+class CustomLightingModel extends THREE.LightingModel {
+    direct({lightColor, reflectedLight}) {
+        reflectedLight.directDiffuse.addAssign(lightColor); // Need to understand how this builder works!
+    }
+};
 
 export class Engine {
     constructor(canvas) {
@@ -13,9 +18,14 @@ export class Engine {
         this.scene = null;
         this.camera = null;
         this.renderer = null;
+        this.renderPipeline = null;
         this.controls = null;
         this.timer = null;
-        this.halftoneSettings = null;
+        this.gui = null;
+
+        this.light1 = null;
+        this.light2 = null;
+        this.light3 = null;
 
         this.listentoState();
     }
@@ -23,8 +33,8 @@ export class Engine {
     async init() {
 
         // Camera
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-        this.camera.position.set(45, 12, -12);
+        this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100);
+        this.camera.position.z = 1.5;
 
         // Scene
         this.scene = new THREE.Scene();
@@ -35,130 +45,55 @@ export class Engine {
 
         // Renderer
         this.renderer = new THREE.WebGPURenderer({ canvas: this.canvas, antialias: true, alpha: true });
-        this.renderer.setClearColor(0x000000, 0);
-        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 1.0;
+        await this.renderer.init();
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        await this.renderer.init();
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+        // RenderPipeline
+        this.renderPipeline = new THREE.RenderPipeline(this.renderer);
+        this.renderPipeline.outputNode = pass(this.scene, this.camera);
 
         // Lighting
-        const ambientLight = new THREE.AmbientLight("#1a1a2e", 1.2);
-        this.scene.add(ambientLight);
+        const sphereGeometry = new THREE.SphereGeometry(0.02, 16, 8);
+        const addLight = (hexColor) => {
+            const sphereMaterial = new THREE.NodeMaterial();
+            sphereMaterial.colorNode = color(hexColor);
+            
+            sphereMaterial.lightsNode = lights(); // This makes the material ignore scene lights (if any)
 
-        const directionLight = new THREE.DirectionalLight("#E0C39A", 4);
-        directionLight.position.set(4, 3, 1);
-        this.scene.add(directionLight);
+            const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
-        const rimLight = new THREE.DirectionalLight("#94ffd1", 2);
-        rimLight.position.set(-3, 2, -2);
-        this.scene.add(rimLight);
+            const light = new THREE.PointLight(hexColor, 0.1, 1);
+            light.add(sphereMesh);
+            this.scene.add(light);
 
-        // Halftone Effect Setting - from Threejs.org Examples
-        this.halftoneSettings = [
-            // Purple
-            {
-                count: 140,
-                color: "#fb00ff",
-                direction: new THREE.Vector3( - 0.4, - 1, 0.5 ),
-                start: 1,
-                end: 0,
-                mixLow: 0,
-                mixHigh: 0.5,
-                radius: 0.8
-            },
+            return light;
+        };
+        
+        this.light1 = addLight(0xffaa00);
+        this.light2 = addLight(0x0040ff); 
+        this.light3 = addLight(0x80ff80);
 
-            // Cyan Highlights
-            {
-                count: 180,
-                color: "#a6292a",
-                direction: new THREE.Vector3( 0.5, 0.5, - 0.2 ),
-                start: 0.55,
-                end: 0.2,
-                mixLow: 0.5,
-                mixHigh: 1,
-                radius: 0.5
-            }
-        ];
+        const allLightsNode = lights([this.light1, this.light2, this.light3]);
 
-        for (const index in this.halftoneSettings) {
+        const points = [];
 
-            const settings = this.halftoneSettings[index];
-
-            // Setting up uniforms
-            const uniforms = {};
-
-            uniforms.count = uniform(settings.count);
-            uniforms.color = uniform(color(settings.color));
-            uniforms.direction = uniform(settings.direction);
-            uniforms.start = uniform(settings.start);
-            uniforms.end = uniform(settings.end);
-            uniforms.mixLow = uniform(settings.mixLow);
-            uniforms.mixHigh = uniform(settings.mixHigh);
-            uniforms.radius = uniform(settings.radius);
-
-            settings.uniforms = uniforms;
+        for(let i = 0; i < 500000; i++) {
+            const point = new THREE.Vector3().random().subScalar(0.5).multiplyScalar(3);
+            points.push(point);
         }
 
-        // Halftone Settings
-        const halftone = Fn(([count, color, direction, start, end, radius, mixLow, mixHigh]) => {
+        const geometryPoints = new THREE.BufferGeometry().setFromPoints(points);
+        const materialPoints = new THREE.PointsNodeMaterial();
 
-            // Grid Pattern
-            let gridUV = screenCoordinate.xy.div(screenSize.yy).mul(count);
-            gridUV = rotate(gridUV, Math.PI * 0.25).mod(1);
+        // Custom Lighting Model
+        const lightingModel = new CustomLightingModel();
+        const lightingModelContext = allLightsNode.context({lightingModel});
+        materialPoints.lightsNode = lightingModelContext;
 
-            // Orientation Strength
-            const orientationStrength = normalWorld
-                .dot(direction.normalize())
-                .remapClamp(end, start, 0, 1);
-
-            // Mask
-            const mask = orientationStrength.mul(radius).mul(0.5)
-                .step(gridUV.sub(0.5).length())
-                .mul(mix(mixLow, mixHigh, orientationStrength));
-
-            return vec4(color, mask);
-
-        });
-
-        const halftones = Fn(([input]) => {
-
-			const halftonesOutput = input;
-
-            for (const settings of this.halftoneSettings) {
-                const halfToneOutput = halftone( settings.uniforms.count, settings.uniforms.color, settings.uniforms.direction, settings.uniforms.start, settings.uniforms.end, settings.uniforms.radius, settings.uniforms.mixLow, settings.uniforms.mixHigh );
-                halftonesOutput.rgb.assign( mix( halftonesOutput.rgb, halfToneOutput.rgb, halfToneOutput.a ));
-            }
-
-            return halftonesOutput;
-
-        });
-
-        // Default Material
-        const defaultMaterial = new THREE.MeshStandardMaterial({
-            color: "#ff622e",
-            roughness: 0.4,
-            metalness: 0.2
-        });
-        defaultMaterial.outputNode = halftones(output);
-
-        // GTB Asset
-        setTimeout(() => {
-            const gltfloader = new GLTFLoader();
-            gltfloader.load (
-                "/testplan.glb",
-                (gltf) => {
-                    const model = gltf.scene;
-                    model.scale.setScalar(2.5);
-                    model.traverse((child) => {
-                        if(child.isMesh)
-                            child.material.outputNode = halftones(output);
-                    });
-                    this.scene.add(model);
-                }
-            );  
-        }, 100);
+        const pointCloud = new THREE.Points(geometryPoints, materialPoints);
+        this.scene.add(pointCloud);
 
         // Controls
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -166,25 +101,25 @@ export class Engine {
         this.controls.minDistance = 0.1;
         this.controls.maxDistance = 50;
 
-        window.addEventListener("resize", () => this.onWindowResize());
+        window.addEventListener("resize", this.onWindowResize.bind(this));
         console.log("Engine Iniliased");
     }
 
     listentoState() {
         APP_STATE.subscribe((state) => {
             if(state.mode == "menu") {
-                this.focusCameraOnHouse(true);
+                this.focusCamera(true);
             } else if(state.mode == "landing") {
-                this.focusCameraOnHouse(false);
+                this.focusCamera(false);
             }
         });
     }
 
-    focusCameraOnHouse(isMenuOpen) {
+    focusCamera(isMenuOpen) {
         if (isMenuOpen) {
-            this.camera.position.set(15, 4, -4);
+            this.camera.position.set(0, 0, 1.5);
         } else {
-            this.camera.position.set(45, 12, -12);
+            this.camera.position.set(0, 0, 1.5);
         }
     }
 
@@ -204,14 +139,26 @@ export class Engine {
     update() {
         this.timer.update();
         this.controls.update();
+        const time = Date.now() * 0.001;
+        const scale = 0.5;
 
-        const time = this.timer.getElapsed();
-        this.halftoneSettings[1].uniforms.direction.value.x = Math.cos(time);
-        this.halftoneSettings[1].uniforms.direction.value.y = Math.sin(time);
+        this.light1.position.x = Math.sin(time * 0.7) * scale;
+        this.light1.position.y = Math.cos(time * 0.5) * scale;
+        this.light1.position.z = Math.cos(time * 0.3) * scale;
+
+        this.light2.position.x = Math.cos(time * 0.3) * scale;
+        this.light2.position.y = Math.sin(time * 0.5) * scale;
+        this.light2.position.z = Math.sin(time * 0.7) * scale;
+
+        this.light3.position.x = Math.sin(time * 0.7) * scale;
+        this.light3.position.y = Math.cos(time * 0.3) * scale;
+        this.light3.position.z = Math.sin(time * 0.5) * scale;
+
+        this.scene.rotation.y = time * 0.1;
     }
 
     render() {
-        this.renderer.render(this.scene, this.camera);
+        this.renderPipeline.render();
     }
 
 }
