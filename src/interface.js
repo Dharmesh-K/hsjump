@@ -77,7 +77,7 @@ export class UIManager {
                 <h2>Portfolio</h2>
                 <div class="reading-text">
                     <h4>Project: The Clay Guest</h4>
-                    <p><em>Status: Pre-production</em></p>
+                    <p><em>Status: In Pre-production</em></p>
                     <p>An animated short film capturing the sensory experiences of a child during the festive period of Ganesh Chaturthi. Inspired by Domee Shi's award winning storytelling in <em>Bao</em>, we aim to bring to the screen the culturally rich and familial rhythms of this vibrant festival.</p>
                     <p>Achieving feature film visual fidelity requires a heavy-duty technical architecture. This project is being built on a Universal Scene Description (USD) centric Solaris and RenderMan pipeline, with an emphasis on Houdini's KineFX/APEX for a soulful character performance.</p>
                 </div>

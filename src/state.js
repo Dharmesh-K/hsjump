@@ -1,6 +1,5 @@
 /** State Manager */
 
-import { Fn } from "three/src/nodes/TSL.js";
 import { call } from "three/tsl";
 
 class StateManager {

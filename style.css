@@ -29,7 +29,7 @@ canvas {
     top: 0; 
     left: 0; 
     z-index: 1; 
-    pointer-events: auto;
+    pointer-events: none;
 }
 
 /* =========================
@@ -154,8 +154,9 @@ canvas {
 
 .back-btn {
     left: 2rem;
-    
-    font-size: 1.5rem;
+    width: auto;
+    padding: 1rem;
+    font-size: 1.2rem;
     font-family: "Clash Display", system-ui;
     color: white;
 }
@@ -202,7 +203,7 @@ canvas {
         rgba(5, 10, 20, 0.85)
     );
 
-    backdrop-filter: blur(40px) saturate(140%);
+    backdrop-filter: blur(10px) saturate(600%);
 
     opacity: 0;
     pointer-events: none;
@@ -235,6 +236,7 @@ canvas {
     color: white;
 
     position: relative;
+    
 
     transition: 
         transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
@@ -246,8 +248,9 @@ canvas {
     transform: translateY(-8px) scale(1.05);
     letter-spacing: 0.175em;
     text-shadow: 
-        0 0 10px rgba(255,255,255,0.5),
-        0 0 20px rgba(255, 255, 255, 0.2);
+        0 0 15px rgba(255, 255, 255, 0.6),
+        0 0 35px rgba(255, 255, 255, 0.3),
+        0 0 50px rgba(255, 255, 255, 0.1);
 }
 
 /* =========================
@@ -341,7 +344,9 @@ body.lock-scroll {
     font-size: clamp(3rem, 8vw, 7rem); /* Make it massive */
     line-height: 1;
     margin: 0;
-    color: #F0FFF0;
+    color: #fff2f0;
+
+    filter: drop-shadow(0 0 50px rgb(206, 193, 193));
 }
 
 /* Your Logic: Reading Content to the Top-Right */
@@ -382,11 +387,24 @@ body.lock-scroll {
 }
 
 /* =========================
-   Mobile Layout (Stair-Step Asymmetry)
+   Mobile Layout
 ========================= */
+@media (hover: hover) and (pointer: fine) {
+    .nav-toggle:hover, 
+    .back-btn:hover {
+        transform: scale(1.15) rotate(90deg);
+        background: rgba(255,255,255,0.12);
+    }
+}
+
 @media (max-width: 900px) {
     #menu-content {
-        padding: 12vh 5vw; 
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+
+        padding: 15vh 6vw 20vh 6vw;
     }
     
     .content-body {
@@ -394,26 +412,29 @@ body.lock-scroll {
         display: flex;
         flex-direction: column; 
         justify-content: flex-start;
-        height: auto;
+        min-height: 100%;
     }
 
     .content-body h2, 
     .content-body h3 {
-        /* Pin the title to the top-left */
         align-self: flex-start;
         text-align: left;
-        margin-bottom: 2rem; /* Add space below the title */
+        margin-bottom: 2.5rem;
     }
 
     .reading-text {
-        /* Pin the reading text to the right side! */
         align-self: flex-end;
-        text-align: left; /* Keep text left-aligned for reading */
-        
-        /* The Magic: Force it to only take up 80% of the screen, 
-           leaving a 20% empty column on the left */
-        width: 85%; 
-        max-width: none; 
+        text-align: left;
+
+        width: 90%; 
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .reading-text {
+        width: 100%; 
+        align-self: center;
     }
 }
 
