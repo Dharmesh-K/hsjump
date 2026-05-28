@@ -3,6 +3,7 @@
 
 import * as THREE from "three/webgpu";
 import { color, deltaTime, emissive, float, Fn, hash, If, instancedArray, instanceIndex, mrt, output, pass, positionLocal, rand, sin, texture, time, uniform, vec2, vec3, vec4, vertexIndex } from "three/tsl";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
 import { caustics, perlinNoise } from "tsl-textures/tsl-textures.js";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
@@ -10,8 +11,6 @@ import { DRACOLoader } from "three/examples/jsm/Addons.js";
 import { gsap } from "gsap/gsap-core";
 
 import { APP_STATE } from "./state.js";
-
-import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 export class Engine {
     constructor(canvas) {
@@ -38,7 +37,8 @@ export class Engine {
 
         /** 2. Camera */
         this.camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 100);
-        this.camera.position.set(5, 0.5, 2);
+        const initialMenuState = APP_STATE.get().mode === "menu";
+        this.focusCamera(initialMenuState, false);
 
         this.listentoState();
 
@@ -252,7 +252,7 @@ export class Engine {
                 x: targetX,
                 y: targetY,
                 z: targetZ,
-                duration: 1.5,
+                duration: 1.2,
                 ease: "power3.inOut"
             });
         } else {
@@ -265,7 +265,7 @@ export class Engine {
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-        const isMenuOpen = APP_STATE.getCurrentState().mode === "menu"; 
+        const isMenuOpen = APP_STATE.get().mode === "menu"; 
         this.focusCamera(isMenuOpen, false);
     }
 
