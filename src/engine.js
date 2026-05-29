@@ -192,7 +192,7 @@ export class Engine {
             this.model = gltf.scene;
 
             // Dynamic Scaling of Marquee Sign
-            const isMobile = window.innerWidth < 800;
+            const isMobile = Math.min(window.innerWidth, window.innerHeight) < 800;
             const modelScale = isMobile ? 0.20 : 0.3;
             this.model.scale.setScalar(modelScale);
             this.scene.add(this.model); 
@@ -247,7 +247,7 @@ export class Engine {
     }
 
     focusCamera(isMenuOpen, animate = true) {
-        const isMobile = window.innerWidth < 768;
+        const isMobile = Math.min(window.innerWidth, window.innerHeight) < 800;
 
         let targetX, targetY, targetZ;
 
@@ -281,7 +281,7 @@ export class Engine {
 
         // GLB Model
         if(this.model) {
-            const isMobile = window.innerHeight < 800;
+            const isMobile = Math.min(window.innerWidth, window.innerHeight) < 800;
             this.model.scale.setScalar(isMobile ? 0.20 : 0.3);
         }
 
