@@ -40,10 +40,8 @@ export class Engine {
         this.scene = new THREE.Scene();
         this.scene.background = color("#067799");
 
-        const viewport = this.getViewportSize();
-
         /** 2. Camera */
-        this.camera = new THREE.PerspectiveCamera(25, viewport.width / viewport.height, 0.1, 100);
+        this.camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 100);
         const initialMenuState = APP_STATE.get().mode === "menu";
         this.focusCamera(initialMenuState, false);
 
@@ -53,7 +51,7 @@ export class Engine {
         this.renderer = new THREE.WebGPURenderer({ canvas: this.canvas, antialias: true });
         await this.renderer.init();
         console.log("Engine Initialised!")
-        this.renderer.setSize(viewport.width, viewport.height);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 0.1;
@@ -231,7 +229,7 @@ export class Engine {
         /** 8. Resizing */
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enabled = false;
-        window.visualViewport?.addEventListener("resize", this.onResize);
+        window.addEventListener("resize", this.onResize);
 
         this.stats = new Stats();
         this.stats.showPanel(0);
@@ -277,10 +275,9 @@ export class Engine {
     }
 
     onWindowResize() {
-        const viewport = this.getViewportSize();
-        this.camera.aspect = viewport.width / viewport.height;
+        this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
-        this.renderer.setSize(viewport.width, viewport.height);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
 
         // GLB Model
         if(this.model) {
@@ -290,14 +287,6 @@ export class Engine {
 
         const isMenuOpen = APP_STATE.get().mode === "menu"; 
         this.focusCamera(isMenuOpen, false);
-    }
-
-    getViewportSize() {
-        const vv = window.visualViewport;
-        return {
-            width: vv ? vv.width : window.innerWidth,
-            height: vv ? vv.height : window.innerHeight
-        };
     }
 
     start() {
@@ -315,7 +304,7 @@ export class Engine {
     destroy() {
         // to clean up memory
         this.renderer.setAnimationLoop(null);
-       window.visualViewport?.removeEventListener("resize", this.onResize);
+        window.removeEventListener("resize", this.onResize);
         this.jump?.kill();
         this.updateParticles = null;
     }
