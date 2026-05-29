@@ -23,7 +23,7 @@ body {
 ========================= */
 
 canvas {
-    width: 100vw;
+    width: 100dvw;
     height: 100dvh; 
     display: block; 
     position: fixed; 
@@ -35,22 +35,6 @@ canvas {
     touch-action: none; 
 }
 
-/* =========================
-   Hide Scrollbars Globally
-========================= */
-
-html,
-body,
-#menu-content {
-    scrollbar-width: none;       /* Moz Firefox */
-    -ms-overflow-style: none;    /* Edge */
-}
-
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-#menu-content::-webkit-scrollbar {
-    display: none;               /* Chrome and Safari */
-}
 
 /* =========================
    UI/Text Layer
