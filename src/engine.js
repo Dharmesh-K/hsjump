@@ -40,7 +40,7 @@ export class Engine {
         this.scene = new THREE.Scene();
         this.scene.background = color("#067799");
 
-        const viewport = getViewportSize();
+        const viewport = this.getViewportSize();
 
         /** 2. Camera */
         this.camera = new THREE.PerspectiveCamera(25, viewport.width / viewport.height, 0.1, 100);
@@ -277,7 +277,7 @@ export class Engine {
     }
 
     onWindowResize() {
-        const viewport = getViewportSize();
+        const viewport = this.getViewportSize();
         this.camera.aspect = viewport.width / viewport.height;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(viewport.width, viewport.height);
@@ -292,7 +292,7 @@ export class Engine {
         this.focusCamera(isMenuOpen, false);
     }
 
-    getViewportSize () {
+    getViewportSize() {
         const vv = window.visualViewport;
         return {
             width: vv ? vv.width : window.innerWidth,
@@ -315,7 +315,7 @@ export class Engine {
     destroy() {
         // to clean up memory
         this.renderer.setAnimationLoop(null);
-        window.removeEventListener("resize", this.onResize);
+       window.visualViewport?.removeEventListener("resize", this.onResize);
         this.jump?.kill();
         this.updateParticles = null;
     }
