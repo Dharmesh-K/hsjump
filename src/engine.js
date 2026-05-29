@@ -1,5 +1,5 @@
 /** Engine - WebGPU/TSL */
-/** Main 3D Point Cloud Scene is the courtesy of the eponymous Mr. Doob (repo: https://github.com/mrdoob/three.js/blob/master/examples/webgpu_lights_custom.html) */
+/** 3D Point Cloud idea is the courtesy of the eponymous Mr. Doob (repo: https://github.com/mrdoob/three.js/blob/master/examples/webgpu_lights_custom.html) */
 
 import * as THREE from "three/webgpu";
 import { color, deltaTime, emissive, float, Fn, hash, If, instancedArray, instanceIndex, length, mix, mrt, oneMinus, output, pass, positionLocal, rand, sin, smoothstep, texture, time, uniform, vec2, vec3, vec4, vertexIndex } from "three/tsl";
