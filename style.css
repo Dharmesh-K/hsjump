@@ -32,7 +32,6 @@ canvas {
     z-index: 1;
 
     pointer-events: auto;
-    overflow: hidden;
     touch-action: none; 
 }
 
