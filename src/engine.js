@@ -2,13 +2,15 @@
 /** Main 3D Point Cloud Scene is the courtesy of the eponymous Mr. Doob (repo: https://github.com/mrdoob/three.js/blob/master/examples/webgpu_lights_custom.html) */
 
 import * as THREE from "three/webgpu";
-import { color, deltaTime, emissive, float, Fn, hash, If, instancedArray, instanceIndex, mrt, output, pass, positionLocal, rand, sin, texture, time, uniform, vec2, vec3, vec4, vertexIndex } from "three/tsl";
+import { color, deltaTime, emissive, float, Fn, hash, If, instancedArray, instanceIndex, length, mix, mrt, oneMinus, output, pass, positionLocal, rand, sin, smoothstep, texture, time, uniform, vec2, vec3, vec4, vertexIndex } from "three/tsl";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
 import { caustics, perlinNoise } from "tsl-textures/tsl-textures.js";
 import { GLTFLoader } from "three/examples/jsm/Addons.js";
 import { DRACOLoader } from "three/examples/jsm/Addons.js";
 import { gsap } from "gsap/gsap-core";
+import Stats from "three/examples/jsm/libs/stats.module.js";
+
 
 import { APP_STATE } from "./state.js";
 
@@ -20,8 +22,10 @@ export class Engine {
         this.renderer = null;
         this.renderPipeline = null;
         this.onResize = this.onWindowResize.bind(this);
+        this.model = null;
 
         this.controls = null;
+        this.stats = null;
 
         this.updateParticles = null;
         this.jump = null;
@@ -34,6 +38,7 @@ export class Engine {
 
         /** 1. Scene */
         this.scene = new THREE.Scene();
+        this.scene.background = color("#067799");
 
         /** 2. Camera */
         this.camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -58,16 +63,16 @@ export class Engine {
         mrtNode.setBlendMode("emissive", new THREE.BlendMode(THREE.NormalBlending));
         scenePass.setMRT(mrtNode);
         const emissiveTexture = scenePass.getTexture("emissive");
-        emissiveTexture.type = THREE.UnsignedByteType;
+        emissiveTexture.type = THREE.HalfFloatType; // Or THREE.UnsignedByteType - for negligible improvement in performance!
         const outputPass = scenePass.getTextureNode();
         const emissivePass = scenePass.getTextureNode("emissive");
-        const bloomPass = bloom(emissivePass, 10, 0.25);
+        const bloomPass = bloom(emissivePass, 5, 0.2);
         
         this.renderPipeline = new THREE.RenderPipeline(this.renderer);
         this.renderPipeline.outputNode = outputPass.add(bloomPass);
 
         /** 5. Particle Effect TSL Compute Shader Functions */
-        const count = 100000;
+        const count = 10000;
         const positions = instancedArray(count, "vec3");
 
         const computePosition = Fn(() => {
@@ -114,7 +119,7 @@ export class Engine {
         material.positionNode = positions.element(vertexIndex);
         const particleGlow = color("#00f0ff");
         material.colorNode = particleGlow;
-        material.emissiveNode = particleGlow.mul(0.5);
+        material.emissiveNode = particleGlow.mul(5);
 
         this.particles = new THREE.Points(geometry, material);
         this.scene.add(this.particles);
@@ -184,11 +189,16 @@ export class Engine {
                 });
                 this.jump.to({}, {duration: 0.5}); // Make the text stay on the ground for a wee bit before jumping again
             }
-            gltf.scene.scale.setScalar(0.3);
-            this.scene.add(gltf.scene); 
+            this.model = gltf.scene;
+
+            // Dynamic Scaling of Marquee Sign
+            const isMobile = window.innerWidth < 800;
+            const modelScale = isMobile ? 0.25 : 0.3;
+            this.model.scale.setScalar(modelScale);
+            this.scene.add(this.model); 
         });
 
-        const waveGeometry = new THREE.PlaneGeometry(10, 10, 50, 50);
+        const waveGeometry = new THREE.PlaneGeometry(10, 10, 16, 16);
         const waveMaterial = new THREE.MeshSSSNodeMaterial();
         const causticNode = caustics({
             scale: 2,
@@ -214,12 +224,16 @@ export class Engine {
 
         /** 7. Basic Lighting and Fog */
         this.scene.add(new THREE.AmbientLight("#cacaca", 5)) 
-        this.scene.fog = new THREE.FogExp2("black", 0.075);
+        this.scene.fog = new THREE.Fog("#067799", 8.0, 10.0);
 
         /** 8. Resizing */
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enabled = false;
         window.addEventListener("resize", this.onResize);
+
+        this.stats = new Stats();
+        this.stats.showPanel(0);
+        document.body.appendChild(this.stats.dom);
     }
 
     listentoState() {
@@ -238,13 +252,13 @@ export class Engine {
         let targetX, targetY, targetZ;
 
         if (isMenuOpen) {
-            targetX = isMobile ? 4.5 : 3.5;
+            targetX = 3.5;
             targetY = 0.5;
-            targetZ = isMobile ? 3.5 : 1.5;
+            targetZ = 1.5;
         } else {
-            targetX = isMobile ? 7.0 : 5.0; 
+            targetX = 5.0; 
             targetY = 0.5;
-            targetZ = isMobile ? 4.0 : 2.0;
+            targetZ = 2.0;
         }
 
         if (animate) {
@@ -252,7 +266,7 @@ export class Engine {
                 x: targetX,
                 y: targetY,
                 z: targetZ,
-                duration: 1.2,
+                duration: 0.75,
                 ease: "power3.inOut"
             });
         } else {
@@ -264,6 +278,12 @@ export class Engine {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // GLB Model
+        if(this.model) {
+            const isMobile = window.innerHeight < 800;
+            this.model.scale.setScalar(isMobile ? 0.25 : 0.3);
+        }
 
         const isMenuOpen = APP_STATE.get().mode === "menu"; 
         this.focusCamera(isMenuOpen, false);
@@ -290,6 +310,8 @@ export class Engine {
     }
 
     render() {
+        this.stats.begin()
         this.renderPipeline.render();
+        this.stats.end()
     }
 }
