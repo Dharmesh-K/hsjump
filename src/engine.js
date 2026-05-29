@@ -52,7 +52,7 @@ export class Engine {
         await this.renderer.init();
         console.log("Engine Initialised!")
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
         this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
         this.renderer.toneMappingExposure = 0.1;
         this.renderer.outputColorSpace = THREE.SRGBColorSpace;
