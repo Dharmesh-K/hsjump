@@ -193,7 +193,7 @@ export class Engine {
 
             // Dynamic Scaling of Marquee Sign
             const isMobile = window.innerWidth < 800;
-            const modelScale = isMobile ? 0.25 : 0.3;
+            const modelScale = isMobile ? 0.20 : 0.3;
             this.model.scale.setScalar(modelScale);
             this.scene.add(this.model); 
         });
@@ -282,7 +282,7 @@ export class Engine {
         // GLB Model
         if(this.model) {
             const isMobile = window.innerHeight < 800;
-            this.model.scale.setScalar(isMobile ? 0.25 : 0.3);
+            this.model.scale.setScalar(isMobile ? 0.20 : 0.3);
         }
 
         const isMenuOpen = APP_STATE.get().mode === "menu"; 
