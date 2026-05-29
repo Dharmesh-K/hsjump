@@ -252,7 +252,7 @@ export class Engine {
         let targetX, targetY, targetZ;
 
         if (isMenuOpen) {
-            targetX = 3.5;
+            targetX = 4.0;
             targetY = 0.5;
             targetZ = 1.5;
         } else {
@@ -266,7 +266,7 @@ export class Engine {
                 x: targetX,
                 y: targetY,
                 z: targetZ,
-                duration: 0.75,
+                duration: 1.0,
                 ease: "power3.inOut"
             });
         } else {
