@@ -1,0 +1,85 @@
+/* --- Contact Section --- */
+.contact-section {
+  min-height: 100svh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+  pointer-events: none; 
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8) 30%, #000 100%);
+  overflow-x: hidden;
+}
+
+/* --- Content Layout (The Editorial Grid) --- */
+.contact-content {
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2rem;
+  padding-top: 15svh; 
+  padding-bottom: 10svh;
+  pointer-events: auto; 
+}
+
+/* --- Header Region --- */
+.contact-title {
+  grid-column: 1 / 13;
+  font-size: 8rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin: 0;
+  text-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+/* --- Body Region (The Magic Offset) --- */
+.contact-body {
+  grid-column: 5 / 13;
+  margin-top: 2rem;
+  font-size: 1.75rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: wheat;
+  text-align: left;
+}
+
+/* --- Email Hyperlink --- */
+.email-link {
+  color: inherit;
+  font-style: italic;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: opacity 0.3s ease, text-decoration-color 0.3s ease;
+}
+
+/* Premium hover effect */
+.email-link:hover {
+  opacity: 0.5;
+  text-decoration-color: transparent;
+}
+
+/* --- Mobile Adjustments --- */
+@media (max-width: 1000px) {
+  .contact-content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .contact-title,
+  .contact-body {
+    grid-column: 1 / -1;
+  }
+
+  .contact-title {
+    font-size: 4rem;
+    padding: 0;
+  }
+  
+  .contact-body {
+    font-size: 1.25rem;
+  }
+}

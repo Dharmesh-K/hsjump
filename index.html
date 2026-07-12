@@ -1,48 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Font 1: Clash Display -->
     <link href="https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700,1&display=swap" rel="stylesheet">
-    <!-- Font 2: Comico -->
-    <link href="https://api.fontshare.com/v2/css?f[]=comico@400&display=swap" rel="stylesheet">
     <title>Honeysuckle Jump Studios</title>
-</head>
-
-<body>
-    <!-- WebGPU/TSL Canvas-->
-    <canvas id="canvas"></canvas>
-
-    <!-- Menu Button -->
-    <button class="ui-btn nav-toggle" aria-label="Open Menu">
-        <span></span><span></span><span></span>
-    </button>
-
-    <!-- Menu Overlay -->
-    <div id="menu-overlay">
-
-        <!-- Main Menu -->
-        <nav id="menu-main">
-           <a class="menu-link" data-section="about">About</a>
-           <a class="menu-link" data-section="portfolio">Portfolio</a>
-           <a class="menu-link" data-section="contact">Contact</a>
-        </nav>
-
-        <!-- Content Menu -->
-        <div id="menu-content">
-            <button class="ui-btn back-btn">Back</button>
-            <div class="content-body"></div>
-        </div>
-        
-    </div>
-
-    <script type = "module" src="./src/main.js"></script>
-
-</body>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

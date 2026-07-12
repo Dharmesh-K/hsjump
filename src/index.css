@@ -1,0 +1,143 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #000;
+  color: #fff;
+  font-family: "Clash Display", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+}
+
+/* Global classes for App.jsx */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background-color: #050505;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer; /* Indicates to user they can click */
+}
+
+/* --- Background Canvas --- */
+.hero-bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100svh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* --- Smooth-Scroll --- */
+.scroll-container {
+  position: relative;
+  width: 100%;
+  z-index: 10;
+}
+
+section {
+  position: relative;
+  width: 100vw;
+  /* Prevent sections from blocking menu clicks */
+  pointer-events: none; 
+}
+
+/* Re-enable pointer events only for actual content */
+section h1, .about-content {
+  pointer-events: auto;
+}
+
+/* --- State Transitions --- */
+.state-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fade-element {
+  animation: smoothFadeIn 1.0s ease-in-out forwards;
+}
+
+@keyframes smoothFadeIn {
+  0% {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0px);
+  }
+}
+
+/* --- About Section --- */
+.about-section {
+  min-height: 100svh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+  /* Optional: Adds a subtle gradient so the text is highly readable 
+     as it scrolls up over the fixed shader */
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8) 30%, #000 100%);
+}
+
+.about-content {
+  width: 90%;;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem; /* Space between paragraphs */
+}
+
+.about-content p {
+  font-size: 3rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: #e5e5e5;
+  text-align: center;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1000px) {
+  .hero h1 {
+      font-size: 3rem;
+      letter-spacing: -0.05rem;
+      width: 100%;
+      padding: 0 1rem;
+  }
+  
+  .about-content p {
+      font-size: 1.5rem;
+      text-align: left;
+  }
+}
+
+/* --- Hiding all ScrollBars */
+
+/* For Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+

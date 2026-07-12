@@ -1,0 +1,40 @@
+.enter-prompt {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+
+.enter-prompt span {
+    position: relative;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: wheat;
+    letter-spacing: 0.25em;
+}
+
+.enter-prompt span::before,
+.enter-prompt span::after {
+    content:"";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+    border: 6px solid rgb(255, 166, 0);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ring 2s cubic-bezier(0.25, 0.65, 0.35, 1) infinite;
+}
+
+.enter-prompt span::after {
+    animation-delay: -1s;
+}
+
+@keyframes ring {
+    0% { width: 32px; height: 32px; opacity: 0; }
+    10% { opacity: 1; }
+    50% { width: 120px; height: 120px; opacity: 0.5; }
+    100% { width: 300px; height: 300px; opacity: 0; }
+}

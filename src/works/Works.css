@@ -1,0 +1,84 @@
+/* --- Works Section --- */
+.works-section {
+  min-height: 100svh;
+  padding: 10rem 2rem;
+  pointer-events: none; 
+  /* Center the grid vertically on the screen */
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8) 30%, #000 100%);
+}
+
+.works-container {
+  width: 100%;
+  max-width: 1260px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4rem;
+  pointer-events: auto;
+}
+
+.works-card {
+  position: relative;
+  width: 100%;
+  text-decoration: none;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* --- Image & Typography Layout --- */
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 1.5rem; 
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  transform: translateZ(0);
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(2px) contrast(1.1);
+  transition: transform 1.2s cubic-bezier(0.19, 1, 0.22, 1), 
+              filter 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+  transform: scale(1.05);
+}
+
+.project-title {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  font-size: 3.5rem;
+  color: #ffffff;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  z-index: 2;
+  margin: 0;
+  text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+}
+
+/* --- Premium Hover Effects --- */
+.works-card:hover .image-wrapper img {
+  transform: scale(1.2);
+  filter: contrast(1.2);
+}
+
+.works-card:hover {
+  transform: translateY(-15px);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1000px) {
+  .works-container {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+  
+  .project-title {
+    font-size: 2.5rem;
+  }
+}
