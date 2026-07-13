@@ -34,7 +34,7 @@
     font-weight: 500;
     text-align: center;
     color: wheat;
-    filter: blur(.75px);
+    /* filter: blur(.75px); */
     letter-spacing: -0.02em;
 }
 
