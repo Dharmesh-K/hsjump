@@ -12,10 +12,12 @@ body, html {
   font-family: "Clash Display", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 #root {
   width: 100%;
+  overflow-x: hidden;
 }
 
 /* Global classes for App.jsx */
@@ -51,12 +53,11 @@ body, html {
 section {
   position: relative;
   width: 100vw;
-  /* Prevent sections from blocking menu clicks */
   pointer-events: none; 
 }
 
 /* Re-enable pointer events only for actual content */
-section h1, .about-content {
+section h1, section a, section button, .about-panel {
   pointer-events: auto;
 }
 
@@ -85,49 +86,6 @@ section h1, .about-content {
   }
 }
 
-/* --- About Section --- */
-.about-section {
-  min-height: 100svh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 4rem 2rem;
-  /* Optional: Adds a subtle gradient so the text is highly readable 
-     as it scrolls up over the fixed shader */
-  background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8) 30%, #000 100%);
-}
-
-.about-content {
-  width: 90%;;
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem; /* Space between paragraphs */
-}
-
-.about-content p {
-  font-size: 3rem;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: 0.02em;
-  color: #e5e5e5;
-  text-align: center;
-}
-
-/* --- Responsive Adjustments --- */
-@media (max-width: 1000px) {
-  .hero h1 {
-      font-size: 3rem;
-      letter-spacing: -0.05rem;
-      width: 100%;
-      padding: 0 1rem;
-  }
-  
-  .about-content p {
-      font-size: 1.5rem;
-      text-align: left;
-  }
-}
-
 /* --- Hiding all ScrollBars */
 
 /* For Chrome, Safari and Opera */
@@ -140,4 +98,3 @@ html, body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
-
