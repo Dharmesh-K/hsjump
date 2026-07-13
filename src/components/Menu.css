@@ -210,3 +210,82 @@ nav {
     will-change: transform;
     display: block; /* Ensures links behave as blocks for transforms */
 }
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1000px) {
+    .menu-bar {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .logo-svg {
+        height: 3.5rem;
+    }
+
+    .menu-hamburger-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .menu-hamburger-icon span {
+        width: 12px;
+    }
+
+    .menu-content-wrapper {
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 6rem 1.5rem 2rem 1.5rem;
+        width: 100%;
+    }
+
+    .menu-content-main {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        padding: 2rem 0 0 0;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 2.5rem;
+    }
+
+    .menu-divider {
+        display: none;
+    }
+
+    .menu-col {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 0.5rem;
+    }
+
+    .menu-col:nth-child(1),
+    .menu-col:nth-child(3) {
+        flex: none;
+    }
+
+    .menu-link a {
+        font-size: clamp(2.2rem, 9vw, 3rem);
+        line-height: 1.15;
+    }
+
+    .menu-tag span {
+        font-size: 0.85rem;
+        letter-spacing: 0.02em;
+        color: #888; /* Slightly brighter for mobile readability */
+    }
+
+    .menu-footer {
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.25rem;
+    }
+
+    .menu-footer .menu-col {
+        gap: 0.25rem;
+    }
+}
